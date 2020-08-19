@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+#Environment variables
+import os
+DB_NAME = os.environ['WIDGET_DB_NAME']
+DB_USER = os.environ['WIDGET_DB_USER']
+DB_PASS = os.environ['WIDGET_DB_PASS']
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -76,8 +83,13 @@ WSGI_APPLICATION = 'widget_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        #local MySQL server endpoint
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 
