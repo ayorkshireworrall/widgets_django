@@ -15,7 +15,9 @@ def widget_list(request):
     if request.method == 'GET':
         widgets = Widget.objects.all()
         serializer = WidgetSerializer(widgets, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        response = JsonResponse(serializer.data, safe=False)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        return response
     
     elif request.method == 'POST':
         data = JSONParser().parse(request)
