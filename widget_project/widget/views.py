@@ -33,20 +33,47 @@ def widget_detail(request, pk):
     try:
         widget = Widget.objects.get(pk=pk)
     except Widget.DoesNotExist:
-        return HttpResponse(status=404)
-    
-    if request.method == 'GET':
-        serializer = WidgetSerializer(widget)
-        return JsonResponse(serializer.data)
+        response = HttpResponse(status=404)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        return response
 
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = WidgetSerializer(widget, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+    if request.method == 'OPTIONS':
+        response = HttpResponse(status=200)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        response.__setitem__('Access-Control-Allow-Methods', 'OPTIONS, GET, DELETE')
+        return response
+
+    
+    elif request.method == 'GET':
+        serializer = WidgetSerializer(widget)
+        response = JsonResponse(serializer.data)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        return response
      
     elif request.method == 'DELETE':
         widget.delete()
-        return HttpResponse(status=204)
+        response = HttpResponse(status=204)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        return response
+
+#TODO remove exemption when authentication in place
+@csrf_exempt
+def add_widget(request):
+    if request.method == 'OPTIONS':
+        response = HttpResponse(status=200)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        response.__setitem__('Access-Control-Allow-Methods', 'OPTIONS, PUT')
+        response.__setitem__('Access-Control-Allow-Headers', 'content-type')
+        return response
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = WidgetSerializer(data=data)
+        response = None
+        if serializer.is_valid():
+            serializer.save()
+            response = JsonResponse(serializer.data)
+        else:
+            response = JsonResponse(serializer.errors, status=400)
+        response.__setitem__('Access-Control-Allow-Origin', '*')
+        return response
