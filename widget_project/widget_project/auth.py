@@ -19,9 +19,7 @@ def getTokenPair(request):
         response = JsonResponse({
             'access': str(refreshToken.access_token)
         })
-        response.__setitem__('Access-Control-Allow-Credentials', 'true')
-        response.__setitem__('set-cookie', 'AWSALBCORS=f6FHXY7nV+RZH8mMfrFZ/ltICa3rLz+1z8ZGpzQEcBVjfTQiAjXofxb5MAZp1voeDz7+QG3ts6e/DgbuKiJCZnOI/d6YTKDhecdI4hEXwcAgIQO0Ey4iGA4dm0eo; Expires=Sun, 06 Sep 2020 08:55:51 GMT; Path=/; SameSite=None;')
-        response.set_cookie('REFRESH_TOKEN', refreshToken, httponly=True, samesite='None', max_age=1000000, domain='api.app.localhost')
+        response.set_cookie('REFRESH_TOKEN', refreshToken, httponly=True, max_age=3600)
         return response
     except (User.DoesNotExist, AuthenticationFailed) as e:
         response = JsonResponse({'detail':'Authentication failed, check username and password'}, status=403)
