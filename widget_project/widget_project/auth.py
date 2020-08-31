@@ -1,17 +1,19 @@
 from rest_framework_simplejwt import views as jwt_views
 from django.http import HttpResponse, JsonResponse
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import exception_handler
 from rest_framework_simplejwt.authentication import AuthenticationFailed
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.parsers import JSONParser
 
 @csrf_exempt
 def getTokenPair(request):
     data = JSONParser().parse(request)
     try:
-        user = User.objects.get(username=data['username'])
+        user = User.objects.get(Q(username=data['username']) | Q(email=data['username']))
         isValidPass = user.check_password(data['password'])
         if not isValidPass:
             raise AuthenticationFailed()
@@ -25,6 +27,15 @@ def getTokenPair(request):
         response = JsonResponse({'detail':'Authentication failed, check username and password'}, status=403)
         return response
 
-def getTokenRefresh():
-    response = jwt_views.TokenRefreshView.as_view()
-    return response
+@csrf_exempt
+def getTokenRefresh(request):
+    try:
+        refresh_token = RefreshToken(request.COOKIES.get('REFRESH_TOKEN'))
+        response = JsonResponse({
+            'access': str(refresh_token.access_token)
+        })
+        return response
+    except TokenError as e:
+        response = JsonResponse({'detail':'Invalid or expired refresh token provided'}, status=403)
+        return response
+    

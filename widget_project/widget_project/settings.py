@@ -19,6 +19,7 @@ DB_NAME = os.environ['WIDGET_DB_NAME']
 DB_USER = os.environ['WIDGET_DB_USER']
 DB_PASS = os.environ['WIDGET_DB_PASS']
 
+SIGNING_KEY = os.environ['WIDGET_SIGNING_KEY']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -66,7 +67,10 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=600),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=1),
+    'BLACKLIST_AFTER_ROTATION': True,
+    'SIGNING_KEY': SIGNING_KEY
 }
 
 CORS_ALLOWED_ORIGINS = [
