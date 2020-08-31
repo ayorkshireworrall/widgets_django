@@ -13,8 +13,7 @@ class WidgetListCreate(generics.ListCreateAPIView):
     queryset = Widget.objects.all()
     serializer_class = WidgetSerializer
 
-#TODO remove exemption when authentication in place
-@csrf_exempt
+@api_view(['OPTIONS', 'GET', 'POST'])
 def widget_list(request):
     if request.method == 'GET':
         widgets = Widget.objects.all()
@@ -59,8 +58,7 @@ def widget_detail(request, pk):
         response.__setitem__('Access-Control-Allow-Origin', '*')
         return response
 
-#TODO remove exemption when authentication in place
-@csrf_exempt
+@api_view(['OPTIONS', 'PUT'])
 def add_widget(request):
     if request.method == 'OPTIONS':
         response = HttpResponse(status=200)
