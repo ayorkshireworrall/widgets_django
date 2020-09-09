@@ -30,12 +30,26 @@ def getTokenPair(request):
 @csrf_exempt
 def getTokenRefresh(request):
     try:
-        refresh_token = RefreshToken(request.COOKIES.get('REFRESH_TOKEN'))
+        cookie_token = request.COOKIES.get('REFRESH_TOKEN')
+        #A random new token generated if None passed in!! (No user assigned so lacks permissions but still annoying)
+        if cookie_token is None:
+            cookie_token = 0
+        refresh_token = RefreshToken(cookie_token)
         response = JsonResponse({
             'access': str(refresh_token.access_token)
         })
         return response
     except TokenError as e:
         response = JsonResponse({'detail':'Invalid or expired refresh token provided'}, status=403)
+        return response
+
+def logout(request):
+    try:
+        response = JsonResponse({})
+        response.delete_cookie('REFRESH_TOKEN')
+        return response
+        #TODO need to learn how to handle errors properly, wtf is this hack?
+    except TokenError as e:
+        response = JsonResponse({'detail': 'Error logging out'}, status=500)
         return response
     
