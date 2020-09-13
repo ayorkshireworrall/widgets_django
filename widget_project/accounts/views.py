@@ -44,12 +44,7 @@ def getTokenRefresh(request):
         return response
 
 def logout(request):
-    try:
-        response = JsonResponse({})
-        response.delete_cookie('REFRESH_TOKEN')
-        return response
-        #TODO need to learn how to handle errors properly, wtf is this hack?
-    except TokenError as e:
-        response = JsonResponse({'detail': 'Error logging out'}, status=500)
-        return response
+    response = JsonResponse({})
+    response.delete_cookie('REFRESH_TOKEN')
+    return response
     

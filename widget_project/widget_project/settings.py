@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     #local apps
     'widget.apps.WidgetConfig',
+    'accounts.apps.AccountsConfig',
 
     #third party apps
     'rest_framework',

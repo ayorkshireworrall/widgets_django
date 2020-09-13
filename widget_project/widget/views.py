@@ -1,3 +1,4 @@
+'''Left as an example, no longer used'''
 from .models import Widget
 from .serializers import WidgetSerializer
 from rest_framework import generics
